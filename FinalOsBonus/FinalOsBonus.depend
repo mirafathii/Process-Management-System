@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1702932073 source:d:\term 7\os\finalosbonus\main.c
+	<stdio.h>
+	<stdlib.h>
+	<pthread.h>
+

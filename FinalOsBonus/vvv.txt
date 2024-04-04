@@ -1,0 +1,178 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+
+typedef struct
+{
+    int id;
+    int burst_time;
+} Process;
+
+Process* initalize_process(int id)
+{
+    Process *process = (Process*)malloc(sizeof(Process));
+    process->id = id;
+    process->burst_time = rand() % 100 + 1;
+    return process;
+}
+
+void printProcess(Process *process) {
+    printf("Process ID: %d, Burst Time: %d\n", process->id, process->burst_time);
+}
+
+typedef struct
+{
+    Process **items;
+    int head;
+    int tail;
+    int capacity;
+    int counter;
+
+} Queue;
+
+void initalize_queue(Queue *queue, int capacity)
+{
+    queue->items = (Process *)malloc(sizeof(Process*) * capacity);
+    queue->head = 0;
+    queue->tail = 0;
+    queue->capacity = capacity;
+    queue->counter = 0;
+}
+/*
+void freeQueue(Queue *q) {
+    if (q->items != NULL) {
+        while (!isQueueEmpty(q)) {
+            //Process *process = dequeue(q);
+            free(process);
+        }
+        free(q->items);
+    }
+    q->head = q->tail = -1;
+    q->capacity = q->counter = 0;
+}
+*/
+void enqueue(Queue *q, Process *process) {
+    if (isQFull(q)) {
+        printf("Queue is full.\n");
+        return;
+    }
+
+    q->items[q->tail] = *process;
+    q->tail = (q->tail + 1) % q->capacity;
+    q->counter++;
+}
+
+Process* dequeue(Queue *q) {
+    if (isQEmpty(q)) {
+        printf("Queue is empty.\n");
+        return NULL;
+    }
+
+    Process *process = &q->items[q->head];
+    q->head = (q->head + 1) % q->capacity;
+    q->counter--;
+
+    return process;
+}
+
+int isQEmpty(Queue *q)
+{
+    if (q->counter == 0)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+int isQFull(Queue *q)
+{
+    if (q->counter == q->capacity)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+void printQueue(Queue *q) {
+    printf("Queue Contents:\n");
+
+    if (isQEmpty(q)) {
+        printf("Queue is empty\n");
+        return;
+    }
+
+    int index = q->head;
+    do {
+        printProcess(&q->items[index]);
+        index = (index + 1) % q->capacity;
+    } while (index != (q->tail + 1) % q->capacity);
+}
+
+Queue firstQueue, secondQueue, thirdQueue;
+
+
+int main()
+{
+    initalize_queue(&firstQueue, 10);
+    initalize_queue(&secondQueue, 20);
+    initalize_queue(&thirdQueue, 30);
+
+    Process* p1 = initalize_process(1);
+    printProcess(p1);
+
+    enqueue(&firstQueue,&p1);
+    printQueue(&firstQueue);
+
+
+    //pthread_t createAndEnterProcess;
+    //pthread_t runProcess;
+
+    //freeQueue(&firstQueue);
+    //freeQueue(&secondQueue);
+    //freeQueue(&thirdQueue);
+
+    return(0);
+}
+
+
+/*
+        for (int i = 0; i < 100; ++i)
+        {
+            Process* processes[i] = initalize_process(i + 1);
+            enqueue(&firstQueue, &processes[i]);
+            x=(processes[i]->burst_time)-8;
+            if (x==0||x<0)
+                return;
+            else
+            {
+
+            }
+        }
+
+
+        /*void insertIntoQ(Queue *q, Process *process)
+{
+            enqueue(&secondQueue, &processes[i]);
+            y=(processes[i]->burst_time)-16;
+            if (y==0||y<0)
+                return;
+            else
+            {
+                z=(rand() % 2) +1 == 0
+                  if(z=1)
+                {
+                    enqueue(&thirdQueue, &processes[i]);
+                }
+                else
+                {
+                  insertIntoQ(q,Process)
+                }
+
+}
+    */
